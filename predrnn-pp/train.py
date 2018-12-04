@@ -20,10 +20,10 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('dataset_name', 'mnist',
                            'The name of dataset.')
 tf.app.flags.DEFINE_string('train_data_paths',
-                           '/Users/aidancurtis/Downloads/moving-mnist-train.npz',
+                           '/home/arc11/moving-mnist-train.npz',
                            'train data paths.')
 tf.app.flags.DEFINE_string('valid_data_paths',
-                           '/Users/aidancurtis/Downloads/moving-mnist-valid.npz',
+                           '/home/arc11/moving-mnist-valid.npz',
                            'validation data paths.')
 tf.app.flags.DEFINE_string('save_dir', 'checkpoints/mnist_predrnn_pp',
                             'dir to store trained net.')
