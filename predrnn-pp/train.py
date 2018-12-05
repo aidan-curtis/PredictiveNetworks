@@ -42,7 +42,7 @@ tf.app.flags.DEFINE_integer('img_width', 320,
                             'input image width.')
 tf.app.flags.DEFINE_integer('img_height', 180,
                             'input image width.')
-tf.app.flags.DEFINE_integer('img_channel', 1,
+tf.app.flags.DEFINE_integer('img_channel', 3,
                             'number of image channel.')
 tf.app.flags.DEFINE_integer('stride', 1,
                             'stride of a convlstm layer.')
@@ -76,15 +76,15 @@ class Model(object):
         self.x = tf.placeholder(tf.float32,
                                 [FLAGS.batch_size,
                                  FLAGS.seq_length,
-                                 FLAGS.img_width/FLAGS.patch_size,
                                  FLAGS.img_height/FLAGS.patch_size,
+                                 FLAGS.img_width/FLAGS.patch_size,
                                  FLAGS.patch_size*FLAGS.patch_size*FLAGS.img_channel])
 
         self.mask_true = tf.placeholder(tf.float32,
                                         [FLAGS.batch_size,
                                          FLAGS.seq_length-FLAGS.input_length-1,
-                                         FLAGS.img_width/FLAGS.patch_size,
                                          FLAGS.img_height/FLAGS.patch_size,
+                                         FLAGS.img_width/FLAGS.patch_size,
                                          FLAGS.patch_size*FLAGS.patch_size*FLAGS.img_channel])
 
         grads = []
@@ -179,11 +179,11 @@ def main(argv=None):
             (FLAGS.batch_size,FLAGS.seq_length-FLAGS.input_length-1))
         true_token = (random_flip < eta)
         #true_token = (random_flip < pow(base,itr))
-        ones = np.ones((FLAGS.img_width/FLAGS.patch_size,
-                        FLAGS.img_height/FLAGS.patch_size,
+        ones = np.ones((FLAGS.img_height/FLAGS.patch_size,
+                        FLAGS.img_width/FLAGS.patch_size,
                         FLAGS.patch_size**2*FLAGS.img_channel))
-        zeros = np.zeros((FLAGS.img_width/FLAGS.patch_size,
-                          FLAGS.img_height/FLAGS.patch_size,
+        zeros = np.zeros((FLAGS.img_height/FLAGS.patch_size,
+                          FLAGS.img_width/FLAGS.patch_size,
                           FLAGS.patch_size**2*FLAGS.img_channel))
         mask_true = []
         for i in xrange(FLAGS.batch_size):
@@ -195,8 +195,8 @@ def main(argv=None):
         mask_true = np.array(mask_true)
         mask_true = np.reshape(mask_true, (FLAGS.batch_size,
                                            FLAGS.seq_length-FLAGS.input_length-1,
-                                           FLAGS.img_width/FLAGS.patch_size,
                                            FLAGS.img_height/FLAGS.patch_size,
+                                           FLAGS.img_width/FLAGS.patch_size,
                                            FLAGS.patch_size**2*FLAGS.img_channel))
         cost = model.train(ims, lr, mask_true)
         if FLAGS.reverse_input:
@@ -224,8 +224,8 @@ def main(argv=None):
                 sharp.append(0)
             mask_true = np.zeros((FLAGS.batch_size,
                                   FLAGS.seq_length-FLAGS.input_length-1,
-                                  FLAGS.img_width/FLAGS.patch_size,
                                   FLAGS.img_height/FLAGS.patch_size,
+                                  FLAGS.img_width/FLAGS.patch_size,
                                   FLAGS.patch_size**2*FLAGS.img_channel))
             while(test_input_handle.no_batch_left() == False):
                 batch_id = batch_id + 1
