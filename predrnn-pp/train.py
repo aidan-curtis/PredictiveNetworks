@@ -40,7 +40,7 @@ tf.app.flags.DEFINE_integer('seq_length', 20,
                             'total input and output length.')
 tf.app.flags.DEFINE_integer('img_width', 320,
                             'input image width.')
-tf.app.flags.DEFINE_integer('height', 180,
+tf.app.flags.DEFINE_integer('img_height', 180,
                             'input image width.')
 tf.app.flags.DEFINE_integer('img_channel', 1,
                             'number of image channel.')
