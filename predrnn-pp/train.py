@@ -20,10 +20,10 @@ FLAGS = tf.app.flags.FLAGS
 tf.app.flags.DEFINE_string('dataset_name', 'mnist',
                            'The name of dataset.')
 tf.app.flags.DEFINE_string('train_data_paths',
-                           '/home/arc11/PredictiveNetworks/predrnn-pp/train_tennis_data.npz',
+                           '/home/arc11/train_tennis_data.npz',
                            'train data paths.')
 tf.app.flags.DEFINE_string('valid_data_paths',
-                           '//home/arc11/PredictiveNetworks/predrnn-pp/val_tennis_data.npz',
+                           '/home/arc11/val_tennis_data.npz',
                            'validation data paths.')
 tf.app.flags.DEFINE_string('save_dir', 'checkpoints/mnist_predrnn_pp',
                             'dir to store trained net.')
