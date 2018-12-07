@@ -59,7 +59,7 @@ tf.app.flags.DEFINE_float('lr', 0.001,
                           'base learning rate.')
 tf.app.flags.DEFINE_boolean('reverse_input', True,
                             'whether to reverse the input frames while training.')
-tf.app.flags.DEFINE_integer('batch_size', 8,
+tf.app.flags.DEFINE_integer('batch_size', 4,
                             'batch size for training.')
 tf.app.flags.DEFINE_integer('max_iterations', 80000,
                             'max num of steps.')
