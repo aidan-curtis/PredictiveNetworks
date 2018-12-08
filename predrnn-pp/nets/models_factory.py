@@ -1,7 +1,7 @@
 import tensorflow as tf
 
 from nets import predrnn_pp
-from nets import predrnn_
+from nets import predrnn
 from nets import convlstm
 from nets import stacked_convlstm
 

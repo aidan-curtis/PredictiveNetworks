@@ -52,10 +52,10 @@ class InputHandle:
             self.current_batch_size = self.total() - self.current_position
         self.current_batch_indices = self.indices[
             self.current_position:self.current_position + self.current_batch_size]
-        self.current_input_length = max(self.data['clips'][0, ind, 1] for ind
-                                        in self.current_batch_indices)
-        self.current_output_length = max(self.data['clips'][1, ind, 1] for ind
-                                         in self.current_batch_indices)
+        self.current_input_length = int(max(self.data['clips'][0, ind, 1] for ind
+                                        in self.current_batch_indices))
+        self.current_output_length = int(max(self.data['clips'][1, ind, 1] for ind
+                                         in self.current_batch_indices))
 
     def next(self):
         self.current_position += self.current_batch_size
@@ -67,10 +67,10 @@ class InputHandle:
             self.current_batch_size = self.total() - self.current_position
         self.current_batch_indices = self.indices[
             self.current_position:self.current_position + self.current_batch_size]
-        self.current_input_length = max(self.data['clips'][0, ind, 1] for ind
-                                        in self.current_batch_indices)
-        self.current_output_length = max(self.data['clips'][1, ind, 1] for ind
-                                         in self.current_batch_indices)
+        self.current_input_length = int(max(self.data['clips'][0, ind, 1] for ind
+                                        in self.current_batch_indices))
+        self.current_output_length = int(max(self.data['clips'][1, ind, 1] for ind
+                                         in self.current_batch_indices))
 
     def no_batch_left(self):
         if self.current_position >= self.total() - self.current_batch_size:
@@ -87,9 +87,9 @@ class InputHandle:
         input_batch = np.transpose(input_batch,(0,1,3,4,2))
         for i in range(self.current_batch_size):
             batch_ind = self.current_batch_indices[i]
-            begin = self.data['clips'][0, batch_ind, 0]
-            end = self.data['clips'][0, batch_ind, 0] + \
-                    self.data['clips'][0, batch_ind, 1]
+            begin = int(self.data['clips'][0, batch_ind, 0])
+            end = int(self.data['clips'][0, batch_ind, 0] + \
+                    self.data['clips'][0, batch_ind, 1])
             data_slice = self.data['input_raw_data'][begin:end, :, :, :]
             data_slice = np.transpose(data_slice,(0,2,3,1))
             input_batch[i, :self.current_input_length, :, :, :] = data_slice
@@ -116,9 +116,9 @@ class InputHandle:
                                     tuple(self.data['dims'][1]))
         for i in range(self.current_batch_size):
             batch_ind = self.current_batch_indices[i]
-            begin = self.data['clips'][1, batch_ind, 0]
-            end = self.data['clips'][1, batch_ind, 0] + \
-                    self.data['clips'][1, batch_ind, 1]
+            begin = int(self.data['clips'][1, batch_ind, 0])
+            end = int(self.data['clips'][1, batch_ind, 0] + \
+                    self.data['clips'][1, batch_ind, 1])
             if self.is_output_sequence:
                 data_slice = raw_dat[begin:end, :, :, :]
                 output_batch[i, : data_slice.shape[0], :, :, :] = data_slice
