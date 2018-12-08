@@ -1,8 +1,14 @@
 import tensorflow as tf
 
 from nets import predrnn_pp
+from nets import predrnn_
+from nets import convlstm
+from nets import stacked_convlstm
 
 networks_map = {'predrnn_pp': predrnn_pp.rnn,
+                'predrnn': predrnn.rnn,
+                'convlstm': convlstm.rnn,
+                'stacked_convlstm': stacked_convlstm.rnn
                }
 
 def construct_model(name, images, mask_true, num_layers, num_hidden,
