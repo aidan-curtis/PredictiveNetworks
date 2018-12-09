@@ -1,8 +1,7 @@
-__author__ = 'yunbo'
+__author__ = 'victor'
 
 import tensorflow as tf
-from layers.GradientHighwayUnit import GHU as ghu
-from layers.CausalLSTMCell import CausalLSTMCell as cslstm
+from tensorflow.contrib.rnn import ConvLSTMCell
 
 def rnn(images, mask_true, num_layers, num_hidden, filter_size, stride=1,
         seq_length=20, input_length=10, tln=True):
@@ -19,35 +18,35 @@ def rnn(images, mask_true, num_layers, num_hidden, filter_size, stride=1,
             num_hidden_in = num_hidden[num_layers-1]
         else:
             num_hidden_in = num_hidden[i-1]
-        new_cell = cslstm('lstm_'+str(i+1),
-                          filter_size,
-                          num_hidden_in,
-                          num_hidden[i],
-                          shape,
-                          tln=tln)
+
+        new_cell = ConvLSTMCell(
+                    conv_ndims=2,
+                    input_shape=[shape[2], shape[3], num_hidden_in],
+                    output_channels=num_hidden[i],
+                    kernel_shape=[filter_size, filter_size],
+                    name='lstm_{}'.format(i+1)
+                )
+
         lstm.append(new_cell)
-        cell.append(None)
-        hidden.append(None)
-
-    gradient_highway = ghu('highway', filter_size, num_hidden[0], tln=tln)
-
-    mem = None
-    z_t = None
+        reuse = bool(gen_images)
+        with tf.variable_scope('stacked_convlstm', reuse=reuse):
+            cell.append(tf.zeros([shape[0], shape[2], shape[3], num_hidden[i]], dtype=tf.float32))
+            hidden.append(tf.zeros([shape[0], shape[2], shape[3], num_hidden[i]], dtype=tf.float32))
 
     for t in xrange(seq_length-1):
         reuse = bool(gen_images)
-        with tf.variable_scope('predrnn_pp', reuse=reuse):
+        with tf.variable_scope('stacked_convlstm', reuse=reuse):
             if t < input_length:
                 inputs = images[:,t]
             else:
                 inputs = mask_true[:,t-10]*images[:,t] + (1-mask_true[:,t-10])*x_gen
 
-            hidden[0], cell[0], mem = lstm[0](inputs, hidden[0], cell[0], mem)
-            z_t = gradient_highway(hidden[0], z_t)
-            hidden[1], cell[1], mem = lstm[1](z_t, hidden[1], cell[1], mem)
+            _, new_state = lstm[0](inputs, tf.contrib.rnn.LSTMStateTuple(c=cell[0], h=hidden[0]))
+            cell[0], hidden[0] = new_state
 
-            for i in xrange(2, num_layers):
-                hidden[i], cell[i], mem = lstm[i](hidden[i-1], hidden[i], cell[i], mem)
+            for i in xrange(1, num_layers):
+                _, new_state = lstm[i](hidden[i-1], tf.contrib.rnn.LSTMStateTuple(c=cell[i], h=hidden[i]))
+                cell[i], hidden[i] = new_state
 
             x_gen = tf.layers.conv2d(inputs=hidden[num_layers-1],
                                      filters=output_channels,
